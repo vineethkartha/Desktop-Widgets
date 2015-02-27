@@ -1,28 +1,49 @@
 from gi.repository import Gtk, GObject,Gdk
 
 
-CSS = """
+CSScool = """
 GtkWindow {
-	background: #CCFF66;
-    opacity:0.9;
+	background: #00FF00;
+    opacity:0.4;
 }
 GtkHeaderBar{
-	background: #CCFF66;
+	background: #00FF00;
 }
-
 """
+
+CSSmed = """
+GtkWindow {
+	background: #FF3300;
+    opacity:0.7;
+}
+GtkHeaderBar{
+	background: #FF3300;
+}
+"""
+CSShot = """
+GtkWindow {
+	background: #FF0000;
+    opacity:0.7;
+}
+GtkHeaderBar{
+	background: #FF0000;
+}
+"""
+
 class MyWidget(Gtk.Window):
 	
 	def __init__(self):
 		Gtk.Window.__init__(self,title="CPU Temperature")
 		self.resize(200,100)
+		self.set_icon_from_file('/media/E/my_works/desktopWidgets/temperatureMonitor/pic/temp.png')
+		self.set_skip_taskbar_hint(True)
 		self.T=""
 		
 		self.box=Gtk.Box(spacing=2)
 		self.add(self.box)
 		
-		t1 = Gtk.Image.new_from_file('/media/E/my_works/desktopWidgets/temperatureMonitor/pic/temp.png')
-		self.box.pack_start(t1,True,True,0)
+		self.t1 = Gtk.Image.new_from_file('/media/E/my_works/desktopWidgets/temperatureMonitor/pic/temp.png')
+		self.box.pack_start(self.t1,True,True,0)
 		
 		self.label=Gtk.Label(self.T)
 		self.box.pack_start(self.label,True,True,0)
@@ -36,19 +57,32 @@ class MyWidget(Gtk.Window):
 		
 		self.timeout_id = GObject.timeout_add(5000, self.readTemperature, None)
 		
+		
+		self.cssprovider = Gtk.CssProvider()
 		self.readTemperature('s')
-		cssprovider = Gtk.CssProvider()
-		cssprovider.load_from_data(CSS)
+		if(int(self.T)>60):
+			self.cssprovider.load_from_data(CSShot)
+		else:
+			self.cssprovider.load_from_data(CSScool)
+			
 		screen = Gdk.Screen.get_default()
 		sc = Gtk.StyleContext()
-		sc.add_provider_for_screen(screen, cssprovider,Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+		sc.add_provider_for_screen(screen, self.cssprovider,Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 		
 	def readTemperature(self,filename):
 		content = open('/sys/class/thermal/thermal_zone0/temp')
 		self.T=str(int(content.read())/1000)
 		displayTemp=self.T+u'\u00B0'+"C"
 		self.label.set_text(displayTemp)
-		#print self.T
+		if(int(self.T)<50):
+			self.cssprovider.load_from_data(CSScool)
+			self.t1.set_from_file('/media/E/my_works/desktopWidgets/temperatureMonitor/pic/cool.jpg')
+		elif(int(self.T)<70):
+			self.cssprovider.load_from_data(CSSmed)
+			self.t1.set_from_file('/media/E/my_works/desktopWidgets/temperatureMonitor/pic/temp.png')
+		else:
+			self.cssprovider.load_from_data(CSShot)
+			self.t1.set_from_file('/media/E/my_works/desktopWidgets/temperatureMonitor/pic/hot.png')
 		return True
 		
 	def readBatStatus(self,filename):
