@@ -76,7 +76,7 @@ class MyWidget(Gtk.Window):
 		self.label.set_text(displayTemp)
 		if(int(self.T)<50):
 			self.cssprovider.load_from_data(CSScool)
-			self.t1.set_from_file('/media/E/my_works/desktopWidgets/temperatureMonitor/pic/cool.jpg')
+			self.t1.set_from_file('/media/E/my_works/desktopWidgets/temperatureMonitor/pic/cool.png')
 		elif(int(self.T)<70):
 			self.cssprovider.load_from_data(CSSmed)
 			self.t1.set_from_file('/media/E/my_works/desktopWidgets/temperatureMonitor/pic/temp.png')
