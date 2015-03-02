@@ -54,6 +54,7 @@ class MyWidget(Gtk.Window):
 		self.set_titlebar(self.header)
 	
 		self.connect("delete-event", Gtk.main_quit)
+		self.connect("button_press_event", self.button_press_event)
 		
 		self.timeout_id = GObject.timeout_add(5000, self.readTemperature, None)
 		
@@ -85,8 +86,11 @@ class MyWidget(Gtk.Window):
 			self.t1.set_from_file('/media/E/my_works/desktopWidgets/temperatureMonitor/pic/hot.png')
 		return True
 		
-	def readBatStatus(self,filename):
-		
+	def button_press_event(self,widget,event):
+		if(event.button==1):
+			print "Left click"
+		if(event.button==3):
+			print"right click"
 		return True
 win = MyWidget()
 win.show_all()
