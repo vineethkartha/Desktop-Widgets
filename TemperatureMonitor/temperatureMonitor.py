@@ -89,8 +89,9 @@ class MyWidget(Gtk.Window):
 	def button_press_event(self,widget,event):
 		if(event.button==1):
 			print "Left click"
+			self.window_position(2)
 		if(event.button==3):
-			print"right click"
+			print self.get_position()
 		return True
 win = MyWidget()
 win.show_all()
