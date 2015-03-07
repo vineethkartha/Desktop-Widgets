@@ -3,10 +3,10 @@ from bs4 import BeautifulSoup
 import requests
 
 url="http://wordsmith.org/words/today.html";
-r=requests.get(url);
+#r=requests.get(url);
 
-data=r.text
-soup=BeautifulSoup(data);
+#data=r.text
+#soup=BeautifulSoup(data);
 
 CSScool = """
 GtkWindow {
@@ -41,7 +41,7 @@ class MyWidget(Gtk.Window):
 		
 		self.connect("delete-event", Gtk.main_quit)
 		#self.connect("button_press_event", self.button_press_event)
-		self.newWord()
+		#self.newWord()
 		self.cssprovider = Gtk.CssProvider()
 		self.cssprovider.load_from_data(CSScool)
 		screen = Gdk.Screen.get_default()
@@ -50,21 +50,21 @@ class MyWidget(Gtk.Window):
 		
 		self.timeout_id = GObject.timeout_add(5000, self.newWord, None)
 	
-	def newWord(self):
+	def newWord(self,something):
+		r=requests.get(url);
+		data=r.text
+		soup=BeautifulSoup(data);
 		count=0;
 		dispText=""
 		for heading in soup.find_all('h3'):
-			#print heading
-			dispText=dispText+''.join(heading.contents)	
-			#self.label.set_text(''.join(heading.contents))
+			dispText=dispText+''.join(heading.contents)
 		for divs in soup.find_all('div',style="margin-left: 20px;"):
 			if(count>1):
 				break;
 			count=count+1
 			dispText=dispText+divs.getText();
-			#print divs.getText()
 			self.label.set_text(dispText)
-			#print (''.join(divs.contents))
+		return True
 	def button_press_event(self,widget,event):
 		if(event.button==3):
 			print"right click"
