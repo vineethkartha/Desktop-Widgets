@@ -1,6 +1,6 @@
-'''.
+"""
 This is a Widget to display a comic strip from the website www.arcamax.com
-'''
+"""
 from gi.repository import Gtk, GObject,Gdk
 from bs4 import BeautifulSoup
 import requests
@@ -10,12 +10,15 @@ import os
 url="http://www.arcamax.com/thefunnies/hiandlois/?morec=1";
 
 class ComicStrip(Gtk.Window):
+	"""
+	This is the ComicStrip class of the widget, the window on which the Comic appears
 	
+	
+	"""
 	def __init__(self):
 		Gtk.Window.__init__(self,title="Comic Strip")
 		self.resize(300,200)
 		self.connect("delete-event", Gtk.main_quit)
-		#self.set_icon_from_file()
 		self.set_skip_taskbar_hint(True)
 		
 		self.header=Gtk.HeaderBar()
@@ -23,9 +26,9 @@ class ComicStrip(Gtk.Window):
 		self.header.set_title("Comic for the Day")
 		self.set_titlebar(self.header)
 		
-		self.setflag=0;
+		self.setFlag=0;
 		self.comic = Gtk.Image()
-		self.f1=""
+		self.comicImg=""
 		
 		self.timeout_id = GObject.timeout_add(5000, self.loadComic)
 		
@@ -43,15 +46,16 @@ class ComicStrip(Gtk.Window):
 		count=0;
 		imgs=soup.findAll("img")
 		if(imgs==[]):
-			self.setflag=0
+			self.setFlag=0
 			return True
 		else:
-			self.setflag=1
-		self.f1=imgs[0].get('src')
-		urllib.urlretrieve(self.f1, os.path.basename(self.f1))
-		if(self.setflag==1):
+			self.setFlag=1
+			
+		self.comicImg=imgs[0].get('src')
+		urllib.urlretrieve(self.comicImg, os.path.basename(self.comicImg))
+		if(self.setFlag==1):
 			GObject.source_remove(self.timeout_id)
-			self.comic.set_from_file(os.path.basename(self.f1))
+			self.comic.set_from_file(os.path.basename(self.comicImg))
 		return True
 		
 win = ComicStrip()
