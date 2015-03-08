@@ -41,7 +41,7 @@ class MyWidget(Gtk.Window):
 		
 		self.box=Gtk.Box(spacing=2)
 		self.add(self.box)
-		
+		self.move(1100,400) #initial postion of the window
 		self.t1 = Gtk.Image.new_from_file('/media/E/my_works/desktopWidgets/temperatureMonitor/pic/temp.png')
 		self.box.pack_start(self.t1,True,True,0)
 		
@@ -88,7 +88,6 @@ class MyWidget(Gtk.Window):
 		
 	def button_press_event(self,widget,event):
 		if(event.button==1):
-			print "Left click"
 			Gtk.Window.window_position(2)
 		if(event.button==3):
 			print self.get_position()
