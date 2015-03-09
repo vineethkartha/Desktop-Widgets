@@ -6,9 +6,12 @@ from bs4 import BeautifulSoup
 import requests
 import urllib
 import os
+import time
 
-#url="http://www.arcamax.com/thefunnies/hiandlois/?morec=1";
-url="http://www.uclick.com/client/nydn/bod/"
+today=time.strftime("%Y/%m/%d/");
+mainURL="http://www.uclick.com/client/nydn/bod/"
+
+
 class ComicStrip(Gtk.Window):
 	"""
 	This is the ComicStrip class of the widget, the window on which the Comic appears
@@ -16,6 +19,12 @@ class ComicStrip(Gtk.Window):
 	
 	"""
 	def __init__(self):
+		self.comicDate=time.strftime("%Y/%m/%d/");
+		self.day=int(time.strftime("%d"))
+		self.year=int(time.strftime("%Y"))
+		self.month=int(time.strftime("%m"))
+		
+		self.comicurl=mainURL+self.comicDate;
 		Gtk.Window.__init__(self,title="Comic Strip")
 		self.resize(300,200)
 		self.connect("delete-event", Gtk.main_quit)
@@ -28,20 +37,40 @@ class ComicStrip(Gtk.Window):
 		self.header.set_title("Comic for the Day")
 		self.set_titlebar(self.header)
 		
+		self.navBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+		Gtk.StyleContext.add_class(self.navBox.get_style_context(), "linked")
+        
+		
+		
+		self.nextBtn=Gtk.Button()
+		self.nextBtn.add(Gtk.Arrow(Gtk.ArrowType.RIGHT,Gtk.ShadowType.NONE))
+		
+		self.prevBtn=Gtk.Button()
+		self.prevBtn.add(Gtk.Arrow(Gtk.ArrowType.LEFT,Gtk.ShadowType.NONE))
+		
+		self.nextBtn.connect("clicked",self.nextComic)
+		self.prevBtn.connect("clicked",self.prevComic)
+		
+		self.navBox.add(self.prevBtn)
+		self.navBox.add(self.nextBtn)
+		
+		self.header.pack_start(self.navBox)
+		
 		self.setFlag=0;
 		self.comic = Gtk.Image()
+		self.comic.set_from_file("/media/E/my_works/desktopWidgets/comicStrip/loading.gif")
 		self.comicImg=""
 		
-		self.timeout_id = GObject.timeout_add(5000, self.loadComic)
+		self.timeout_id = GObject.timeout_add(5000, self.loadComic,self.comicurl)
 		
 		self.box=Gtk.Box(spacing=2)
 		self.add(self.box)
 		
-		
+		self.box.pack_start(self.nextBtn,True,True,0)
 		self.box.pack_start(self.comic,True,True,0)
-		self.comic.set_from_file("/media/E/my_works/desktopWidgets/comicStrip/loading.gif")
 		
-	def loadComic(self):
+		
+	def loadComic(self,url):
 		r=requests.get(url);
 		print r.status_code
 		data=r.text
@@ -49,7 +78,6 @@ class ComicStrip(Gtk.Window):
 
 		count=0;
 		imgs=soup.findAll('img')
-		print imgs
 		if(imgs==[]):
 			self.setFlag=0
 			return True
@@ -57,12 +85,31 @@ class ComicStrip(Gtk.Window):
 			self.setFlag=1
 		
 		self.comicImg=imgs[0].get('src')
-		urllib.urlretrieve(self.comicImg, os.path.basename(self.comicImg))
+		urllib.urlretrieve(self.comicImg, "/home/kartha/.comic/"+os.path.basename(self.comicImg))
 		if(self.setFlag==1):
 			GObject.source_remove(self.timeout_id)
-			self.comic.set_from_file(os.path.basename(self.comicImg))
+			self.comic.set_from_file("/home/kartha/.comic/"+os.path.basename(self.comicImg))
+			#self.comic.set_from_file(os.path.basename(self.comicImg))
 		return True
 		
+	def prevComic(self,some):
+		self.day=self.day-1
+		if(self.day<1):
+			return
+		self.comicDate=str(self.year)+"/"+str("%02d"%self.month)+"/"+str("%02d"%self.day);
+		self.comicurl=mainURL+self.comicDate
+		self.loadComic(self.comicurl)
+		#print self.comicurl
+		
+	def nextComic(self,event):
+		self.day=self.day+1
+		if(self.day>int(time.strftime("%d"))):
+			return 
+		
+		self.comicDate=str(self.year)+"/"+str("%02d"%self.month)+"/"+str("%02d"%self.day);
+		self.comicurl=mainURL+self.comicDate
+		self.loadComic(self.comicurl)
+		#print self.comicurl
 win = ComicStrip()
 win.show_all()
 Gtk.main()
