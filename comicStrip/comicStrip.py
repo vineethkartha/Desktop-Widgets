@@ -32,6 +32,10 @@ class ComicStrip(Gtk.Window):
 		
 		self.move(1100,200)
 		
+		self.loader = Gtk.Spinner()
+		
+		
+		self.loader.start()
 		self.header=Gtk.HeaderBar()
 		self.header.set_show_close_button(False)
 		self.header.set_title("Comic for the Day")
@@ -58,7 +62,7 @@ class ComicStrip(Gtk.Window):
 		
 		self.setFlag=0;
 		self.comic = Gtk.Image()
-		self.comic.set_from_file("/media/E/my_works/desktopWidgets/comicStrip/loading.gif")
+		#self.comic.set_from_file("/media/E/my_works/desktopWidgets/comicStrip/loading.gif")
 		self.comicImg=""
 		
 		self.timeout_id = GObject.timeout_add(5000, self.loadComic,self.comicurl)
@@ -66,6 +70,7 @@ class ComicStrip(Gtk.Window):
 		self.box=Gtk.Box(spacing=2)
 		self.add(self.box)
 		
+		self.box.pack_start(self.loader,True,True,0)
 		self.box.pack_start(self.nextBtn,True,True,0)
 		self.box.pack_start(self.comic,True,True,0)
 		
@@ -83,6 +88,7 @@ class ComicStrip(Gtk.Window):
 			return True
 		else:
 			self.setFlag=1
+			self.loader.stop()
 		
 		self.comicImg=imgs[0].get('src')
 		urllib.urlretrieve(self.comicImg, "/home/kartha/.comic/"+os.path.basename(self.comicImg))

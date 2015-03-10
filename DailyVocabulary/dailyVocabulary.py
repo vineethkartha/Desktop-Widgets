@@ -33,6 +33,7 @@ class MyWidget(Gtk.Window):
 		self.label=Gtk.Label("Error Loading Word")
 		self.box.pack_start(self.label,True,True,0)
 		
+		self.loader=Gtk.Spinner()
 		self.header=Gtk.HeaderBar()
 		self.header.set_show_close_button(False)
 		self.header.set_title("Word for the day")
