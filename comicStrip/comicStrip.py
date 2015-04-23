@@ -24,7 +24,8 @@ class ComicStrip(Gtk.Window):
 		self.year=int(time.strftime("%Y"))
 		self.month=int(time.strftime("%m"))
 		
-		self.comicurl=mainURL+self.comicDate;
+		self.comicurl=mainURL
+		
 		Gtk.Window.__init__(self,title="Comic Strip")
 		self.resize(300,200)
 		self.connect("delete-event", Gtk.main_quit)
@@ -66,7 +67,7 @@ class ComicStrip(Gtk.Window):
 		self.comicImg=""
 		
 		self.timeout_id = GObject.timeout_add(5000, self.loadComic,self.comicurl)
-		
+		print self.comicurl
 		self.box=Gtk.Box(spacing=2)
 		self.add(self.box)
 		
@@ -105,7 +106,7 @@ class ComicStrip(Gtk.Window):
 		self.comicDate=str(self.year)+"/"+str("%02d"%self.month)+"/"+str("%02d"%self.day);
 		self.comicurl=mainURL+self.comicDate
 		self.loadComic(self.comicurl)
-		#print self.comicurl
+		print self.comicurl
 		
 	def nextComic(self,event):
 		self.day=self.day+1
