@@ -17,13 +17,12 @@ class countDown(Gtk.Window):
 		self.remTime=0			
 
 		Gtk.Window.__init__(self,title="Count Down")
-		self.resize(300,200)
+		self.resize(200,100)
 		self.connect("delete-event", Gtk.main_quit)
 		self.set_skip_taskbar_hint(True)
 		
 		self.box=Gtk.Box(spacing=2)
 		self.add(self.box)
-		self.move(1100,200)
 		
 		self.label=Gtk.Label(self.remTime)
 		self.box.pack_start(self.label,True,True,0)
